@@ -7,7 +7,7 @@ diskNum = 44
 
 #open all BLOCK files
 for x in range(0, diskNum):
-    files.append(open("C:/Users/Jean-Loup/Desktop/DISK/BLOCK"+str(x+1)+".txt","r"))
+    files.append(open("./DISK/BLOCK"+str(x+1)+".txt","r"))
 
 index1 = {}
 index2 = {}
@@ -68,9 +68,9 @@ while files:
             else :
                 readChar = file.read(1)
         
-diskWrite1= open("C:/Users/Jean-Loup/Desktop/DISK/InvertedIndex1.txt","w+")
-diskWrite2= open("C:/Users/Jean-Loup/Desktop/DISK/InvertedIndex2.txt","w+")
-diskWrite3= open("C:/Users/Jean-Loup/Desktop/DISK/InvertedIndex3.txt","w+")
+diskWrite1= open("./DISK/InvertedIndex1.txt","w+")
+diskWrite2= open("./DISK/InvertedIndex2.txt","w+")
+diskWrite3= open("./DISK/InvertedIndex3.txt","w+")
 diskWrite1.write(json.dumps(index1,sort_keys=True))
 diskWrite2.write(json.dumps(index2,sort_keys=True))
 diskWrite3.write(json.dumps(index3,sort_keys=True))  

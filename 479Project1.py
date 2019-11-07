@@ -12,10 +12,7 @@ diskNum = 1
 wroteToDisk = False
 allwords = []
 
-stopwords150 = []
-for x in range(150):
-    stopwords150.append(stopwords.words('english')[x])
-stopwords150 = set(stopwords150)
+stopwords = stopwords.words('english')
 
 # go through all sgm files in reuters corpus
 for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r"):
@@ -30,7 +27,7 @@ for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r
        text = ''.join(c for c in text if not c.isdigit())
        text = text.lower()
        text = word_tokenize(text)
-       text = [w for w in text if not w in stopwords150] 
+       text = [w for w in text if not w in stopwords] 
        positionalNum += len(text)
        i =0;
        
@@ -42,13 +39,13 @@ for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r
                
            if  (articleNumber % 500 == 0 and not wroteToDisk ):
                wroteToDisk = True
-               diskWrite= open("C:/Users/Jean-Loup/Desktop/DISK/BLOCK"+str(diskNum)+".txt","w+")
+               diskWrite= open("./DISK/BLOCK"+str(diskNum)+".txt","w+")
                diskWrite.write(json.dumps(dictionary,sort_keys=True))
                diskWrite.close()
                diskNum += 1
                dictionary = {}
-           if text[i] not in allwords:
-               allwords.append(text[i])
+           #if text[i] not in allwords:
+           #    allwords.append(text[i])
                
            if text[i] not in dictionary.keys():
                dictionary[text[i]] = [articleNumber]
@@ -61,7 +58,7 @@ for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r
        f.close()
        
 # write final dictionary to disk because it didnt get to % 500
-diskWrite= open("C:/Users/Jean-Loup/Desktop/DISK/BLOCK"+str(diskNum)+".txt","w+")
+diskWrite= open("./DISK/BLOCK"+str(diskNum)+".txt","w+")
 diskWrite.write(json.dumps(dictionary,sort_keys=True))
 diskWrite.close()
 
@@ -69,9 +66,9 @@ print(positionalNum)
 
 allwords.sort()
 
-for i in range(len(allwords)):
-    if (i % 25000 ==0):
-        print(allwords[i])
+#for i in range(len(allwords)):
+#    if (i % 25000 ==0):
+#        print(allwords[i])
     
 
 
