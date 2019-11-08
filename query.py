@@ -1,4 +1,5 @@
 import json
+import math
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
     
@@ -9,17 +10,40 @@ file2 = open("./DISK/InvertedIndex2.txt","r")
 index2 = json.load(file2)
 file3 = open("./DISK/InvertedIndex3.txt","r")
 index3 = json.load(file3)
+file4 = open("./DISK/DocumentFrequency.txt","r")
+docFreq = json.load(file4)
+file5 = open("./DISK/DocumentLengths.txt","r")
+L = json.load(file5)
+file6 = open("./DISK/TermFrequencies.txt","r")
+freq = json.load(file6)
 stopwords = stopwords.words('english')
 
 #bm25 values:
 N = 25000
-k = 1
+k = 5
 b = 0.5
+Lavg = 118
 
 # intersection of 2 lists
 def intersection(lst1, lst2): 
     lst3 = [value for value in lst1 if value in lst2] 
-    return lst3 
+    return lst3
+#takes list of retrieved docuemnts and a query, returns ranked list of docuemnts
+def bm25Rank(docList,query):
+
+    scores = {}
+    
+    for doc in docList:
+        scores[doc] = 0
+        for term in query:
+           f = 0 # term frequency
+           if str(doc)+term in freq:   # make sure document has term
+                f= freq[str(doc)+term]
+           temp = (N/docFreq[term])
+           
+           scores[doc] += math.log(temp,10)* (((k+1)*f)/(k*((1-b)+b*(L[doc]/Lavg))+f))
+    return sorted(scores, key=scores.get, reverse=True)#return scores dictionary sorted by value
+    
 # implementation of AND query for n terms in 'q'
 def ANDquery(q):
     words = q
@@ -37,7 +61,7 @@ def ANDquery(q):
 
     numLists = len(lists)
 
-    for i in range(numLists):
+    for i in range(numLists):#intersection on i lists
         lists[0] = intersection(lists[0],lists[i])
         
     return lists[0]
@@ -69,12 +93,7 @@ def ORquery(q):
                 else:
                     ORdict[doc] = ORdict[doc]+1
 
-    stringReturn = ""
-    for key in (sorted(ORdict, key=lambda x: ORdict[x],reverse = True)):
-        stringReturn+=(key+": "+str(ORdict[key])+", ")
-        
-
-    return (stringReturn)
+    return sorted(ORdict, key=lambda x: ORdict[x],reverse = True)
 
 
  # take user input and query   
@@ -87,14 +106,14 @@ while(True):
             inp = ''.join(c for c in inp if not c.isdigit())
             inp = word_tokenize(inp)
             inp = [w for w in inp if not w in stopwords] 
-            print(ANDquery(inp))
+            print(bm25Rank(ANDquery(inp),inp))
     elif (inp == "2"):
         while(True):
             inp = input("Enter a query : ").lower()
             inp = ''.join(c for c in inp if not c.isdigit())
             inp = word_tokenize(inp)
             inp = [w for w in inp if not w in stopwords] 
-            print(ORquery(inp))
+            print(bm25Rank(ORquery(inp),inp))
     else:
         print("Invalid selection")
 

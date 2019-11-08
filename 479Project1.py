@@ -10,11 +10,14 @@ dictionary = {}
 articleNumber = 1
 diskNum = 1
 wroteToDisk = False
-allwords = []
+termFrequencies = {}
+docLengths = {}
+docLength = 0
 
 stopwords = stopwords.words('english')
 
 # go through all sgm files in reuters corpus
+# insert path to reuters below
 for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r"):
 
     for file in files: 
@@ -30,27 +33,39 @@ for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r
        text = [w for w in text if not w in stopwords] 
        positionalNum += len(text)
        i =0;
+
        
-# go through data, add tokens to dictionary. Count article number. write to disk every 500
+       
+# go through data, add tokens to dictionary. Count article number. 
        while i <= len(text)-1:
+           docLength += 1
            if text[i] == "\x03":
+               docLengths[articleNumber] = docLength # keep track of document lengths 
+               docLength  = 0
                articleNumber += 1
                wroteToDisk = False;
                
-           if  (articleNumber % 500 == 0 and not wroteToDisk ):
+           if  (articleNumber % 500 == 0 and not wroteToDisk ): #write to disk every 500
                wroteToDisk = True
                diskWrite= open("./DISK/BLOCK"+str(diskNum)+".txt","w+")
                diskWrite.write(json.dumps(dictionary,sort_keys=True))
                diskWrite.close()
                diskNum += 1
                dictionary = {}
-           #if text[i] not in allwords:
-           #    allwords.append(text[i])
+
                
            if text[i] not in dictionary.keys():
                dictionary[text[i]] = [articleNumber]
+            
            elif articleNumber not in dictionary[text[i]]:
                dictionary[text[i]].append(articleNumber)
+ 
+           
+           if str(articleNumber)+text[i] not in termFrequencies.keys():
+               termFrequencies[str(articleNumber)+text[i]]=1  # keep dictionary of docId concatenated with the term, and frequency
+           else:
+               termFrequencies[str(articleNumber)+text[i]] += 1
+               
                
            i += 1
            
@@ -59,16 +74,24 @@ for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r
        
 # write final dictionary to disk because it didnt get to % 500
 diskWrite= open("./DISK/BLOCK"+str(diskNum)+".txt","w+")
+diskWrite2= open("./DISK/DocumentLengths.txt","w+") # write document lengths to disk
+diskWrite3= open("./DISK/termFrequencies.txt","w+") # write termFrequencies to disk 
 diskWrite.write(json.dumps(dictionary,sort_keys=True))
+diskWrite2.write(json.dumps(docLengths))
+diskWrite3.write(json.dumps(termFrequencies))
 diskWrite.close()
+diskWrite2.close()
+diskWrite3.close()
 
-print(positionalNum)
+#find average doc length
+total = 0
+for l in docLengths:
+    total += docLengths[l]
 
-allwords.sort()
+print (total/len(docLengths))
 
-#for i in range(len(allwords)):
-#    if (i % 25000 ==0):
-#        print(allwords[i])
+
+
     
 
 

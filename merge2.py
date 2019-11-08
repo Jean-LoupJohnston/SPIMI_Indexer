@@ -67,16 +67,31 @@ while files:
  
             else :
                 readChar = file.read(1)
-        
+
+# get document frequency of terms
+freq = {}
+for term in index1:
+    freq[term] = len(index1[term])
+for term in index2:
+    freq[term] = len(index2[term])
+for term in index3:
+    freq[term] = len(index3[term])
+
+
+
+       
 diskWrite1= open("./DISK/InvertedIndex1.txt","w+")
 diskWrite2= open("./DISK/InvertedIndex2.txt","w+")
 diskWrite3= open("./DISK/InvertedIndex3.txt","w+")
+diskWrite4= open("./DISK/DocumentFrequency.txt","w+")
 diskWrite1.write(json.dumps(index1,sort_keys=True))
 diskWrite2.write(json.dumps(index2,sort_keys=True))
-diskWrite3.write(json.dumps(index3,sort_keys=True))  
+diskWrite3.write(json.dumps(index3,sort_keys=True))
+diskWrite4.write(json.dumps(freq,sort_keys=True))
 diskWrite1.close()
 diskWrite2.close()
 diskWrite3.close()
+diskWrite4.close()
 
 
         
