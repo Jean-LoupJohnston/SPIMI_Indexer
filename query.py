@@ -105,14 +105,16 @@ while(True):
             inp = input("Enter a query : ").lower()
             inp = ''.join(c for c in inp if not c.isdigit())
             inp = word_tokenize(inp)
-            inp = [w for w in inp if not w in stopwords] 
+            inp = [w for w in inp if not w in stopwords]
+            print(len(bm25Rank(ANDquery(inp),inp)))
             print(bm25Rank(ANDquery(inp),inp))
     elif (inp == "2"):
         while(True):
             inp = input("Enter a query : ").lower()
             inp = ''.join(c for c in inp if not c.isdigit())
             inp = word_tokenize(inp)
-            inp = [w for w in inp if not w in stopwords] 
+            inp = [w for w in inp if not w in stopwords]
+            print(len(bm25Rank(ORquery(inp),inp)))
             print(bm25Rank(ORquery(inp),inp))
     else:
         print("Invalid selection")

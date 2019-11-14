@@ -18,7 +18,7 @@ stopwords = stopwords.words('english')
 
 # go through all sgm files in reuters corpus
 # insert path to reuters below
-for root, dirs, files in os.walk("C:/Users/Jean-Loup/Downloads/reuters21578/","r"):
+for root, dirs, files in os.walk("./DISK/reuters21578/","r"):
 
     for file in files: 
      if file.endswith('.sgm'):
